@@ -30,7 +30,7 @@ stock = st.text_input("Type Stock Name", value='SPY').upper()
 
 # Create a number adjustment 'slider' that allows the user to change the Moving Average they would like to use.
 # We use a default of 14 to match with RSI, along with a minimum of 10 and a maximum 0f 200
-moving_avg_period = st.number_input("Moving Average (Default 14, Min 10, Max 200)", value=14, min_value=10,
+moving_avg_period = st.number_input("Exponential Moving Average (Default 14, Min 10, Max 200)", value=14, min_value=10,
                                     max_value=200)
 
 # There is some text under the interactive query that lets the user know if data was loaded, waiting to load, or
@@ -45,17 +45,10 @@ def rsi(data_frame, periods=14, ema=True):
     close_delta = data_frame['Close'].diff()
     up = close_delta.clip(lower=0)
     down = -1 * close_delta.clip(upper=0)
+    moving_average_up = up.ewm(com=14 - 1, adjust=True, min_periods=14).mean()
+    moving_average_down = down.ewm(com=14 - 1, adjust=True, min_periods=14).mean()
 
-    if ema == True:
-        # Use exponential moving average
-        ma_up = up.ewm(com=periods - 1, adjust=True, min_periods=periods).mean()
-        ma_down = down.ewm(com=periods - 1, adjust=True, min_periods=periods).mean()
-    else:
-        # Use simple moving average
-        ma_up = up.rolling(window=periods, adjust=False).mean()
-        ma_down = down.rolling(window=periods, adjust=False).mean()
-
-    relative_strength_index = ma_up / ma_down
+    relative_strength_index = moving_average_up / moving_average_down
     relative_strength_index = 100 - (100 / (1 + relative_strength_index))
     return relative_strength_index
 
