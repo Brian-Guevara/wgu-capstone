@@ -2,7 +2,7 @@
 # WGU Computer Science Capstone C964
 
 # List of Imports needed for the program to run:
-from datetime import date
+from datetime import date, datetime
 import streamlit as st
 from dateutil.relativedelta import relativedelta
 from plotly import graph_objs as go
@@ -79,7 +79,7 @@ try:
     cur_price = df['Close'][int(len(df) - 1)]
     st.subheader("Current Price: $" + str(round(cur_price, 2)))
     st.text("Read below for tomorrow's close prediction and Buy/Sell/Neutral Recommendation")
-    
+
     # MACHINE LEARNING SECTION #
     # THIS IS OUR PREDICTIVE METHOD. It is used to predict the next day's closing price
     # For this program, we will use a simple LinearRegression algorithm since it has broad uses and is easy to implement
@@ -116,8 +116,8 @@ try:
     st.subheader("Relative Strength Index of " + stock)
     fig2 = go.Figure()
     fig2.add_trace(go.Scatter(x=df['Date'], y=df['RSI'], name='RSI'))
-    fig2.add_hline(y=70, name = 'Overbought', line_color= 'Red')
-    fig2.add_hline(y=30, name='Oversold', line_color= 'Red')
+    fig2.add_hline(y=70, name='Overbought', line_color='Red')
+    fig2.add_hline(y=30, name='Oversold', line_color='Red')
     fig2.layout.update(width=900, height=400)
     st.plotly_chart(fig2)
 
@@ -176,6 +176,14 @@ try:
     st.write("Mean Absolute Error:", str(mean_absolute_error(y_test, y_pred)))
     # Ideally we want the Coefficient of Determination to be close to 1.
     st.write("Coefficient of Determination:", str(r2_score(y_test, y_pred)))
+
+    # This is our code that will make a log of the stock, its last closing price, the predicted close for tomorrow,
+    # and the Exponential Moving Average Used
+    log = open('log.txt', "a+")
+    log.write(str(datetime.now()) + ' -- Stock: ' + stock + ' -- Last Close: $' + str(round(last_close, 2)) +
+              ' -- Tomorrow\'s Predicted Close: $' + str(round(pred_close, 2)) + ' -- EMA Used: ' + moving_avg_title
+              + '\n')
+    log.close()
 except:
     # If our data cannot be loaded for any reason, we will print out the following message.
     data_load_state.text("Please Try Another Stock/Ticker")
