@@ -115,6 +115,8 @@ try:
     st.subheader("Relative Strength Index of " + stock)
     fig2 = go.Figure()
     fig2.add_trace(go.Scatter(x=df['Date'], y=df['RSI'], name='RSI'))
+    fig2.add_hline(y=70, name = 'Overbought', line_color= 'Red')
+    fig2.add_hline(y=30, name='Oversold', line_color= 'Red')
     fig2.layout.update(width=900, height=400)
     st.plotly_chart(fig2)
 
