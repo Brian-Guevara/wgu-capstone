@@ -79,6 +79,7 @@ try:
     cur_price = df['Close'][int(len(df) - 1)]
     st.subheader("Current Price: $" + str(round(cur_price, 2)))
     st.text("Read below for tomorrow's close prediction and Buy/Sell/Neutral Recommendation")
+    
     # MACHINE LEARNING SECTION #
     # THIS IS OUR PREDICTIVE METHOD. It is used to predict the next day's closing price
     # For this program, we will use a simple LinearRegression algorithm since it has broad uses and is easy to implement
