@@ -41,7 +41,7 @@ moving_avg_title = str(moving_avg_period) + ' EMA'
 
 # This method is used to calculate the Relative Strength Index of a Stock
 # RSI is usually calculated in 14 day intervals
-def rsi(data_frame, periods=14, ema=True):
+def rsi(data_frame):
     close_delta = data_frame['Close'].diff()
     up = close_delta.clip(lower=0)
     down = -1 * close_delta.clip(upper=0)
