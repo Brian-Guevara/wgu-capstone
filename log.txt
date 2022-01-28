@@ -1,0 +1,1 @@
+2022-01-28 07:42:39.743918 -- Stock: SPY -- Last Close: $428.92 -- Tomorrow's Predicted Close: $473.11 -- EMA Used: 14 EMA
