@@ -2,6 +2,7 @@
 # WGU Computer Science Capstone C964
 
 # List of Imports needed for the program to run:
+import os
 from datetime import date, datetime
 import streamlit as st
 from dateutil.relativedelta import relativedelta
@@ -78,7 +79,7 @@ try:
     # Print the current price of the stock
     cur_price = df['Close'][int(len(df) - 1)]
     st.subheader("Current Price: $" + str(round(cur_price, 2)))
-    st.text("Read below for tomorrow's close prediction and Buy/Sell/Neutral Recommendation")
+    st.text("Read below for Next Business Day\'s close prediction and \nBuy/Sell/Neutral Recommendation")
 
     # MACHINE LEARNING SECTION #
     # THIS IS OUR PREDICTIVE METHOD. It is used to predict the next day's closing price
@@ -141,28 +142,28 @@ try:
     table.set_index('Date', inplace=True)
     st.table(table.tail(14))
 
-    # Here we will display tomorrow's predicted closing price
+    # Here we will display next business day's predicted closing price
     pred_close = df['Predicted Next Day Close'][int(len(df) - 1)]
-    st.subheader("Tomorrow's Predicted Close: $" + str(round(pred_close, 2)))
+    st.subheader("Next Business Day\'s Predicted Close: $" + str(round(pred_close, 2)))
 
     # This is our basic formula to tell the user to buy/sell a stock after getting all this information
     current_day = int(len(df) - 1)
     two_days_ago = int(len(df) - 3)
     today_rsi = float(df['RSI'][current_day])
     two_days_ago_rsi = float(df['RSI'][two_days_ago])
-    tomorrow_predicted_close = float(df['Predicted Next Day Close'][current_day])
+    next_predicted_close = float(df['Predicted Next Day Close'][current_day])
     last_close = float(df['Close'][current_day])
 
     # If today's RSI is greater than 2 days ago RSI, this shows a positive/upward trend. Our assumption is stronger if
     # our predicted close is greater than the last close. Finally, we call this a buy if RSI is LESS THAN 70.
     # When RSI is greater than 70, traders consider the stock to be OVERBOUGHT
-    if (today_rsi > two_days_ago_rsi) and (tomorrow_predicted_close > last_close) and (today_rsi < 70):
+    if (today_rsi > two_days_ago_rsi) and (next_predicted_close > last_close) and (today_rsi < 70):
         st.title('BUY STOCK')
 
     # If today's RSI is less than 2 days ago RSI, this shows a negative/downward trend. Our assumption is stronger if
     # our predicted value is less than the last close. Finally, we call this a sell if RSI is GREATER THAN 30. When
     # RSI is less than 30, traders consider the stock to be OVERSOLD.
-    elif (today_rsi < two_days_ago_rsi) and (tomorrow_predicted_close < last_close) and (today_rsi > 30):
+    elif (today_rsi < two_days_ago_rsi) and (next_predicted_close < last_close) and (today_rsi > 30):
         st.title('SELL STOCK')
     # In all other conditions, tell the user to maintain a neutral position.
     else:
@@ -177,13 +178,6 @@ try:
     # Ideally we want the Coefficient of Determination to be close to 1.
     st.write("Coefficient of Determination:", str(r2_score(y_test, y_pred)))
 
-    # This is our code that will make a log of the stock, its last closing price, the predicted close for tomorrow,
-    # and the Exponential Moving Average Used
-    log = open('.\log.txt', "a+")
-    log.write(str(datetime.now()) + ' -- Stock: ' + stock + ' -- Last Close: $' + str(round(last_close, 2)) +
-              ' -- Tomorrow\'s Predicted Close: $' + str(round(pred_close, 2)) + ' -- EMA Used: ' + moving_avg_title
-              + '\n')
-    log.close()
 except:
     # If our data cannot be loaded for any reason, we will print out the following message.
     data_load_state.text("Please Try Another Stock/Ticker")
