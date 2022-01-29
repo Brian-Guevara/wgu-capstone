@@ -179,7 +179,7 @@ try:
 
     # This is our code that will make a log of the stock, its last closing price, the predicted close for tomorrow,
     # and the Exponential Moving Average Used
-    log = open('./log.txt', "a+")
+    log = open('.\log.txt', "a+")
     log.write(str(datetime.now()) + ' -- Stock: ' + stock + ' -- Last Close: $' + str(round(last_close, 2)) +
               ' -- Tomorrow\'s Predicted Close: $' + str(round(pred_close, 2)) + ' -- EMA Used: ' + moving_avg_title
               + '\n')
