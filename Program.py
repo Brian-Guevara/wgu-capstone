@@ -43,12 +43,17 @@ moving_avg_title = str(moving_avg_period) + ' EMA'
 # This method is used to calculate the Relative Strength Index of a Stock
 # RSI is usually calculated in 14 day intervals
 def rsi(data_frame):
+    # Create a data frame with a list of differences between the most recent close price and the previous close price
     close_delta = data_frame['Close'].diff()
+    # Create two other data frames that represent positive changes in price close and negative
     up = close_delta.clip(lower=0)
     down = -1 * close_delta.clip(upper=0)
+
+    # Calculate the exponential moving averages of these data frames to get Average Gain and Average Loss
     moving_average_up = up.ewm(com=14 - 1, adjust=True, min_periods=14).mean()
     moving_average_down = down.ewm(com=14 - 1, adjust=True, min_periods=14).mean()
 
+    # Apply the RSI formula
     relative_strength_index = moving_average_up / moving_average_down
     relative_strength_index = 100 - (100 / (1 + relative_strength_index))
     return relative_strength_index
@@ -104,17 +109,19 @@ try:
     # The following lines of code will create a line graph that will contain the Closing Price, Selected Moving
     # Average, and our Predicted Close Values.
     # These will be our first visual type: Line Graphs
-    st.subheader("Closing Price and " + moving_avg_title + " of " + stock)
+    st.subheader("Closing Price,  " + moving_avg_title + " of " + stock + ", and Next Day's Predicted Close")
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=df['Date'], y=df['Close'], name='Close'))
     fig.add_trace(go.Scatter(x=df['Date'], y=df[moving_avg_title], name=moving_avg_title))
-    fig.add_trace(go.Scatter(x=df['Date'], y=df['Predicted Next Day Close'], name="Predicted Next Day Close"))
+    fig.add_trace(go.Scatter(x=df['Date'], y=df['Predicted Next Day Close'], name="Next Day's Predicted Close"))
     fig.layout.update(xaxis_rangeslider_visible=True)
     fig.layout.update(width=900, height=800)
     st.plotly_chart(fig)
 
     # The following lines of code will create a line graph that will show our RSI values (trend of a stock)
     st.subheader("Relative Strength Index of " + stock)
+    st.write ("The red lines represent the 70 and 30 values for RSI. \n" +
+              "70 or over means the stock is overbought. 30 and under means the stock is oversold.")
     fig2 = go.Figure()
     fig2.add_trace(go.Scatter(x=df['Date'], y=df['RSI'], name='RSI'))
     fig2.add_hline(y=70, name='Overbought', line_color='Red')
